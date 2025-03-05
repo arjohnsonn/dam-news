@@ -8,6 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
 import { NAV_THEME } from '~/theme';
+import { Text, Image, View, TouchableOpacity } from 'react-native';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -45,10 +46,18 @@ export default function RootLayout() {
 }
 
 const SCREEN_OPTIONS = {
-  animation: 'ios_from_right', // for android
+  animation: 'ios_from_right',
+  headerTitle: '',
 } as const;
 
 const INDEX_OPTIONS = {
   headerLargeTitle: false,
-  title: 'Trending Today',
+  headerLeft: () => <Text className="pl-2 font-serif text-2xl font-bold">Trending For You</Text>,
+  headerRight: () => (
+    <TouchableOpacity style={{ marginRight: 15 }} onPress={() => {}}>
+      <View className="rounded-full bg-gray-200 p-1">
+        <Image source={require('../assets/Profile.png')} className="h-6 w-6" />
+      </View>
+    </TouchableOpacity>
+  ),
 } as const;
