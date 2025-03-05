@@ -12,7 +12,7 @@ const Interaction = (props: Props) => {
       <View className="flex flex-row items-center gap-x-3">
         <View className="rounded-full bg-gray-300 p-1">
           <Image
-            source={props.authorImage ?? require('../assets/Profile.png')}
+            source={props.authorImage ?? require('../images/Profile.png')}
             className="h-5 w-5"
           />
         </View>
@@ -21,17 +21,17 @@ const Interaction = (props: Props) => {
       <View className="flex flex-row items-center gap-x-2">
         <TouchableOpacity>
           <View className="rounded-full bg-gray-300 p-2">
-            <Image source={require('../assets/save.png')} className="h-4 w-4" />
+            <Image source={require('../images/save.png')} className="h-4 w-4" />
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View className="rounded-full bg-gray-300 p-2">
-            <Image source={require('../assets/share.png')} className="h-4 w-4" />
+            <Image source={require('../images/share.png')} className="h-4 w-4" />
           </View>
         </TouchableOpacity>
         <TouchableOpacity>
           <View className="rounded-full bg-gray-300 p-2">
-            <Image source={require('../assets/like.png')} className="h-4 w-4" />
+            <Image source={require('../images/like.png')} className="h-4 w-4" />
           </View>
         </TouchableOpacity>
       </View>

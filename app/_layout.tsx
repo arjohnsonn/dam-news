@@ -56,7 +56,7 @@ const INDEX_OPTIONS = {
   headerRight: () => (
     <TouchableOpacity style={{ marginRight: 15 }} onPress={() => {}}>
       <View className="rounded-full bg-gray-200 p-1">
-        <Image source={require('../assets/Profile.png')} className="h-6 w-6" />
+        <Image source={require('../images/Profile.png')} className="h-6 w-6" />
       </View>
     </TouchableOpacity>
   ),

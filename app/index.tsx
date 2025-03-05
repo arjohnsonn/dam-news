@@ -6,7 +6,7 @@ export default function Screen() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View className="flex items-center p-5" style={{ flex: 1 }}>
-        <Image source={require('../assets/grid.png')} className="h-32 w-full rounded-xl" />
+        <Image source={require('../images/grid.png')} className="h-32 w-full rounded-xl" />
         <Text className="mt-2 w-full text-left font-serif text-xl font-bold">
           This is the headline of a breaking news article. Support the cause here.
         </Text>
