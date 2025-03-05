@@ -16,7 +16,7 @@
     },
     "orientation": "portrait",
     "icon": "./images/icon.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./images/splash.png",
       "resizeMode": "contain",
