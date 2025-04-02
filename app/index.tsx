@@ -23,9 +23,14 @@ const Screen: React.FC = () => {
         image: article.urlToImage || '',
       }));
 
-      setArticles(newArticles);
-      if (newArticles.length > 0) {
-        setCurrentArticle(newArticles[0]);
+      // Get empty articles from newArticles
+      const filteredArticles = newArticles.filter(
+        (article) => article.summary != '' && article.content != ''
+      );
+
+      setArticles(filteredArticles);
+      if (filteredArticles.length > 0) {
+        setCurrentArticle(filteredArticles[0]);
       }
     } catch (error) {
       console.error('Failed to fetch articles:', error);
@@ -55,7 +60,11 @@ const Screen: React.FC = () => {
     }
   };
 
-  return (
+  return loading ? (
+    <View className="h-full w-full items-center justify-center">
+      <ActivityIndicator size="large" />
+    </View>
+  ) : (
     <>
       <FlatList
         data={articles}
@@ -65,7 +74,6 @@ const Screen: React.FC = () => {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={loading ? <ActivityIndicator size="large" /> : null}
         onViewableItemsChanged={updateCurrentArticle}
         viewabilityConfig={viewabilityConfig}
       />
