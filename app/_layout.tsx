@@ -8,8 +8,12 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
 import { NAV_THEME } from '~/theme';
-import { Text, Image, View, TouchableOpacity } from 'react-native';
+import { Text, Image, View, TouchableOpacity, ScrollView } from 'react-native';
 import { Sheet, useSheetRef } from '~/components/nativewindui/Sheet';
+
+import { getBulletedList } from '~/lib/gpt';
+import { useState } from 'react';
+import { useArticleStore } from '~/store/articleStore';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -19,8 +23,34 @@ export {
 export default function RootLayout() {
   useInitialAndroidBarSync();
   const { colorScheme, isDarkColorScheme } = useColorScheme();
+  const [stepUpText, setStepUpText] = useState<string | null>(null);
 
+  let modalOpen: boolean = false;
   const bottomSheetModalRef = useSheetRef();
+
+  // Cache so we don't call the API every time
+  let cachedTitle: string;
+
+  async function stepUp() {
+    const currentArticle = useArticleStore.getState().currentArticle;
+    if (!currentArticle) {
+      console.warn('No current article found');
+      return;
+    }
+
+    let text;
+    if (currentArticle.headline != cachedTitle) {
+      text = await getBulletedList(currentArticle?.content);
+      cachedTitle = currentArticle.headline;
+    } else {
+      text = stepUpText;
+    }
+
+    setStepUpText(text);
+
+    bottomSheetModalRef.current?.present();
+    modalOpen = true;
+  }
 
   return (
     <>
@@ -40,10 +70,16 @@ export default function RootLayout() {
               </Stack>
             </NavThemeProvider>
           </ActionSheetProvider>
-          <Sheet ref={bottomSheetModalRef} snapPoints={[200]}>
+          <Sheet
+            ref={bottomSheetModalRef}
+            snapPoints={[stepUpText ? stepUpText.length / 1.4 : 350]}>
             <View>
-              <Text className="text-center text-2xl font-bold">Step Up!</Text>
-              <Text className="text-center text-lg">Here is an example of things to do</Text>
+              <Text className="text-center text-2xl font-black text-[#E32722]">Step Up!</Text>
+              <ScrollView>
+                <Text className="text-md p-3 text-center leading-4">
+                  {stepUpText?.replace(/\n/g, '\n\n')}
+                </Text>
+              </ScrollView>
             </View>
           </Sheet>
         </BottomSheetModalProvider>
@@ -53,17 +89,13 @@ export default function RootLayout() {
         <TouchableOpacity onPress={() => {}}>
           <Image source={require('../images/search.png')} className="mx-8 h-10 w-10" />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            bottomSheetModalRef.current?.present();
-          }}>
+        <TouchableOpacity onPress={stepUp}>
           <Image source={require('../images/stepup.png')} className="mx-8 h-10 w-10 rounded-full" />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => {}}>
-          <Image source={require('../images/profile2.png')} className="mx-8 h-8 w-8" />
+          <Image source={require('../images/profile.png')} className="mx-8 h-8 w-8" />
         </TouchableOpacity>
       </View>
-      {/* </ExampleProvider> */}
     </>
   );
 }
