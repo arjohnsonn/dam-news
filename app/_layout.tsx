@@ -14,9 +14,13 @@ import { Sheet, useSheetRef } from '~/components/nativewindui/Sheet';
 import { getBulletedList } from '~/lib/gpt';
 import { useState } from 'react';
 import { useArticleStore } from '~/store/articleStore';
+
 //
 //adding a new comment to step-up
 //another one
+
+//testing branch stepup!
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
