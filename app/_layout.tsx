@@ -9,6 +9,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
 import { NAV_THEME } from '~/theme';
 import { Text, Image, View, TouchableOpacity } from 'react-native';
+import { Sheet, useSheetRef } from '~/components/nativewindui/Sheet';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -18,6 +19,8 @@ export {
 export default function RootLayout() {
   useInitialAndroidBarSync();
   const { colorScheme, isDarkColorScheme } = useColorScheme();
+
+  const bottomSheetModalRef = useSheetRef();
 
   return (
     <>
@@ -37,9 +40,29 @@ export default function RootLayout() {
               </Stack>
             </NavThemeProvider>
           </ActionSheetProvider>
+          <Sheet ref={bottomSheetModalRef} snapPoints={[200]}>
+            <View>
+              <Text className="text-center text-2xl font-bold">Step Up!</Text>
+              <Text className="text-center text-lg">Here is an example of things to do</Text>
+            </View>
+          </Sheet>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
 
+      <View className="flex flex-row items-center justify-between bg-white p-6 pb-10">
+        <TouchableOpacity onPress={() => {}}>
+          <Image source={require('../images/search.png')} className="mx-8 h-10 w-10" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            bottomSheetModalRef.current?.present();
+          }}>
+          <Image source={require('../images/stepup.png')} className="mx-8 h-10 w-10 rounded-full" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {}}>
+          <Image source={require('../images/profile2.png')} className="mx-8 h-8 w-8" />
+        </TouchableOpacity>
+      </View>
       {/* </ExampleProvider> */}
     </>
   );
@@ -53,11 +76,4 @@ const SCREEN_OPTIONS = {
 const INDEX_OPTIONS = {
   headerLargeTitle: false,
   headerLeft: () => <Text className="pl-2 font-serif text-2xl font-bold">Trending For You</Text>,
-  headerRight: () => (
-    <TouchableOpacity style={{ marginRight: 15 }} onPress={() => {}}>
-      <View className="rounded-full bg-gray-200 p-1">
-        <Image source={require('../images/Profile.png')} className="h-6 w-6" />
-      </View>
-    </TouchableOpacity>
-  ),
 } as const;
