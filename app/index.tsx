@@ -1,39 +1,82 @@
-import { SafeAreaView, View, Image, Text, ScrollView } from 'react-native';
-import Interaction from '~/components/Interaction';
+import React, { useState, useEffect, useRef } from 'react';
+import { FlatList, ActivityIndicator, ListRenderItemInfo, View } from 'react-native';
+import { getTopArticles } from '~/lib/newsApi';
+import Article from '~/components/Article';
+import { ArticleData } from '~/store/articleStore';
+import { useArticleStore } from '~/store/articleStore';
 
-export default function Screen() {
+const Screen: React.FC = () => {
+  const [articles, setArticles] = useState<ArticleData[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [currentArticle, setCurrentArticle] = useState<ArticleData | null>(null);
+
+  const fetchArticles = async () => {
+    setLoading(true);
+    try {
+      const data = await getTopArticles();
+      const newArticles: ArticleData[] = data.articles.map((article) => ({
+        id: article.url, // using URL as a unique identifier
+        headline: article.title,
+        author: article.author || 'Unknown',
+        summary: article.description || '',
+        content: article.content || '',
+        image: article.urlToImage || '',
+      }));
+
+      setArticles(newArticles);
+      if (newArticles.length > 0) {
+        setCurrentArticle(newArticles[0]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch articles:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  useEffect(() => {
+    if (currentArticle) {
+      useArticleStore.getState().setCurrentArticle(currentArticle);
+    }
+  }, [currentArticle]);
+
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 50,
+  };
+
+  const updateCurrentArticle = (info: { viewableItems: Array<{ item: ArticleData }> }) => {
+    if (info.viewableItems.length > 0) {
+      const visibleItem = info.viewableItems[0].item;
+      setCurrentArticle(visibleItem);
+    }
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View className="flex items-center p-5" style={{ flex: 1 }}>
-        <Image source={require('../images/grid.png')} className="h-32 w-full rounded-xl" />
+    <>
+      <FlatList
+        data={articles}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <Article article={item} />}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={loading ? <ActivityIndicator size="large" /> : null}
+        onViewableItemsChanged={updateCurrentArticle}
+        viewabilityConfig={viewabilityConfig}
+      />
 
-        {/* HEADLINE/TITLE */}
-        <Text className="mt-2 w-full text-left font-serif text-xl font-bold">
-          This is the headline of a breaking news article. Support the cause here.
-        </Text>
-
-        <Interaction author="John Doe" />
-
-        {/* SUMMARY */}
-        <View className="text-md w-full rounded-xl bg-[#DCEFEF] p-3 leading-4">
-          <Text className="font-seri text-left ">
-            The article discusses the ongoing issues with hospital price transparency, where
-            unclear, inconsistent data hinders patients from predicting surgery costs.
-          </Text>
+      {currentArticle && (
+        <View style={{ padding: 10 }}>
+          <Article article={currentArticle} />
         </View>
-
-        {/* ARTICLE CONTENT */}
-        <ScrollView className="leading-2 mt-4 h-full text-left font-serif">
-          <Text className="text-md leading-7">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum consectetur mi nec
-            enim interdum, quis luctus lorem posuere. Cras id dui vitae justo gravida interdum.
-            Mauris sodales, lacus sit amet facilisis fermentum, velit libero luctus diam, quis
-            gravida quam est at arcu. Vestibulum ante ipsum primis in faucibus orci luctus et
-            ultrices posuere cubilia curae; Nulla facilisi. Integer auctor elit ut metus convallis,
-            sit amet malesuada nisl tristique. Sed non metus id neque pharetra varius.
-          </Text>
-        </ScrollView>
-      </View>
-    </SafeAreaView>
+      )}
+    </>
   );
-}
+};
+
+export default Screen;

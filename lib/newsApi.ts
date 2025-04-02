@@ -1,78 +1,45 @@
-// // NewsAPI.ts
-// export interface NewsAPIConfig {
-//   apiKey: string;
-//   baseUrl?: string; // defaults to "https://newsapi.org/v2"
-// }
+export interface Article {
+  source: {
+    id: string | null;
+    name: string;
+  };
+  author: string | null;
+  title: string;
+  description: string | null;
+  url: string;
+  urlToImage: string | null;
+  publishedAt: string;
+  content: string | null;
+}
 
-// export interface NewsSource {
-//   id: string | null;
-//   name: string;
-// }
+export interface TopHeadlinesResponse {
+  status: string;
+  totalResults: number;
+  articles: Article[];
+}
 
-// export interface NewsArticle {
-//   source: NewsSource;
-//   author: string | null;
-//   title: string;
-//   description: string;
-//   url: string;
-//   urlToImage: string;
-//   publishedAt: string;
-//   content: string;
-// }
+/**
+ * Fetches top headlines from NewsAPI.
+ * @param country - The 2-letter ISO country code (default: 'us').
+ * @param category - The news category (default: 'general').
+ * @returns A promise resolving to a TopHeadlinesResponse object.
+ */
+export async function getTopArticles(
+  country: string = 'us',
+  category: string = 'general'
+): Promise<TopHeadlinesResponse> {
+  const apiKey = process.env.EXPO_PUBLIC_NEWS_API_KEY;
+  if (!apiKey) {
+    throw new Error('EXPO_PUBLIC_NEWS_API_KEY environment variable is not set.');
+  }
 
-// export interface NewsResponse {
-//   status: 'ok' | 'error';
-//   totalResults: number;
-//   articles: NewsArticle[];
-//   code?: string; // for errors
-//   message?: string; // for errors
-// }
+  const url = `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}&apiKey=${apiKey}`;
+  const response = await fetch(url);
 
-// // Internal configuration stored as module-level variables.
-// let _apiKey: string = process.env.EXPO_PUBLIC_NEWS_API_KEY!;
-// let _baseUrl: string = 'https://newsapi.org/v2';
+  if (!response.ok) {
+    throw new Error(`Error fetching top articles: ${response.statusText}`);
+  }
 
-// /**
-//  * Build a full URL for the request.
-//  */
-// function buildUrl(endpoint: string, params: Record<string, any> = {}): string {
-//   const url = new URL(endpoint, _baseUrl);
-//   url.searchParams.append('apiKey', _apiKey);
-//   Object.keys(params).forEach((key) => {
-//     if (params[key] !== undefined) {
-//       url.searchParams.append(key, params[key].toString());
-//     }
-//   });
-//   return url.toString();
-// }
-
-// /**
-//  * Generic request function using async/await.
-//  */
-// export async function request<T = any>(
-//   endpoint: string,
-//   params: Record<string, any> = {}
-// ): Promise<T> {
-//   const url = buildUrl(endpoint, params);
-//   const response = await fetch(url);
-//   if (!response.ok) {
-//     throw new Error(`NewsAPI request failed with status ${response.status}`);
-//   }
-//   const data = await response.json();
-//   return data as T;
-// }
-
-// /**
-//  * Get top headlines.
-//  * Example: getTopHeadlines({ country: "us" })
-//  */
-// export async function getTopHeadlines(params: Record<string, any> = {}): Promise<NewsResponse> {
-//   return await request<NewsResponse>('/top-headlines', params);
-// }
-
-// /**
-//  * Get all articles matching certain criteria.
-//  */
-// export async function getEverything(params: Record<string, any> = {}): Promise<NewsResponse> {
-//   return await request<NewsResponse>('/everything', params);
-// }
+  const data: TopHeadlinesResponse = await response.json();
+  return data;
+}
