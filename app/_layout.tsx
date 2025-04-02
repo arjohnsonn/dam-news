@@ -38,15 +38,23 @@ export default function RootLayout() {
       return;
     }
 
-    let text;
-    if (currentArticle.headline != cachedTitle) {
-      text = await getBulletedList(currentArticle?.content);
-      cachedTitle = currentArticle.headline;
-    } else {
-      text = stepUpText;
-    }
+    setStepUpText('Loading action items...');
 
-    setStepUpText(text);
+    try{
+      let text;
+      if (currentArticle.headline != cachedTitle) {
+        text = await getBulletedList(currentArticle?.summary);
+        cachedTitle = currentArticle.headline;
+      } else {
+        text = stepUpText;
+      }
+    
+
+      setStepUpText(text);
+    } catch(error) {
+      console.error('Error fetching action items:', error);
+      setStepUpText('Failed to load action items. Please try again.');
+    }
 
     bottomSheetModalRef.current?.present();
     modalOpen = true;
