@@ -1,5 +1,5 @@
 // articleStore.ts
-import create from 'zustand';
+import {create} from 'zustand';
 
 export interface ArticleData {
   id: string;
