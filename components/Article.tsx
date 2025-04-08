@@ -18,9 +18,9 @@ const Article: React.FC<ArticleProps> = ({ article }) => {
   const windowWidth = Dimensions.get('window').width;
 
   return (
-    <SafeAreaView style={{ flex: 1, width: windowWidth }}>
-      <View className="flex-1 p-5">
-        <ScrollView className="mt-3">
+    <SafeAreaView style={{ width: windowWidth }}>
+      <View className="flex-1 px-5">
+        <ScrollView>
           <Image source={{ uri: article.image }} className="h-32 w-full rounded-lg" />
 
           {/* HEADLINE/TITLE */}
@@ -29,12 +29,12 @@ const Article: React.FC<ArticleProps> = ({ article }) => {
           <Interaction author={article.author} url={article.id} />
 
           {/* SUMMARY */}
-          <View className="rounded-lg bg-[##DCEFEF] p-3">
+          <View className="rounded-lg bg-[#DCEFEF] p-3">
             <Text className="text-md text-left font-serif leading-5">{article.summary}</Text>
           </View>
 
           {/* ARTICLE CONTENT */}
-          <Text className="text-md font-serif leading-6">{article.content}</Text>
+          <Text className="text-md mt-2 font-serif leading-6">{article.content}</Text>
         </ScrollView>
       </View>
     </SafeAreaView>

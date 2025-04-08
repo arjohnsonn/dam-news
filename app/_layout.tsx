@@ -3,7 +3,7 @@ import 'expo-dev-client';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { ThemeProvider as NavThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
@@ -40,7 +40,7 @@ export default function RootLayout() {
 
     setStepUpText('Loading action items...');
 
-    try{
+    try {
       let text;
       if (currentArticle.headline != cachedTitle) {
         text = await getBulletedList(currentArticle?.summary);
@@ -48,10 +48,9 @@ export default function RootLayout() {
       } else {
         text = stepUpText;
       }
-    
 
       setStepUpText(text);
-    } catch(error) {
+    } catch (error) {
       console.error('Error fetching action items:', error);
       setStepUpText('Failed to load action items. Please try again.');
     }
@@ -74,7 +73,7 @@ export default function RootLayout() {
           <ActionSheetProvider>
             <NavThemeProvider value={NAV_THEME[colorScheme]}>
               <Stack screenOptions={SCREEN_OPTIONS}>
-                <Stack.Screen name="index" options={INDEX_OPTIONS} />
+                <Stack.Screen name="(tabs)"  />
               </Stack>
             </NavThemeProvider>
           </ActionSheetProvider>
@@ -92,28 +91,11 @@ export default function RootLayout() {
           </Sheet>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
-
-      <View className="flex flex-row items-center justify-between bg-white p-6 pb-10">
-        <TouchableOpacity onPress={() => {}}>
-          <Image source={require('../images/search.png')} className="mx-8 h-10 w-10" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={stepUp}>
-          <Image source={require('../images/stepup.png')} className="mx-8 h-10 w-10 rounded-full" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}}>
-          <Image source={require('../images/profile.png')} className="mx-8 h-8 w-8" />
-        </TouchableOpacity>
-      </View>
     </>
   );
 }
 
 const SCREEN_OPTIONS = {
   animation: 'ios_from_right',
-  headerTitle: '',
-} as const;
-
-const INDEX_OPTIONS = {
-  headerLargeTitle: false,
-  headerLeft: () => <Text className="pl-2 font-serif text-2xl font-bold">Trending For You</Text>,
+  headerShown: false,
 } as const;
