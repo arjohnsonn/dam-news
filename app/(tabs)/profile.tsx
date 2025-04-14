@@ -11,7 +11,7 @@ const completedDays = [0, 1];
 export default function ProfileScreen() {
   return (
     <SafeAreaView>
-      <Text className="mt-4 px-5 font-serif text-3xl font-bold">Hello, user!</Text>
+      <Text className="mt-2 px-5 font-serif text-3xl font-bold">Hello, {`{user}`}!</Text>
       <Text className="px-5 text-xl font-bold">Day streak!</Text>
 
       <View>

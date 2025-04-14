@@ -1,6 +1,8 @@
 import React from 'react';
 import { Image, Text, View } from 'react-native';
 
+// TODO: use firebase to get saved articles and bills
+
 type Props = {};
 
 const Saved = (props: Props) => {

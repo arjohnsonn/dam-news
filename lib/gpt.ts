@@ -18,16 +18,21 @@ const client = new OpenAI({
  * @returns A promise resolving to a plain-text bulleted list.
  */
 export async function getBulletedList(articleText: string): Promise<string> {
-  const prompt = 'Read this article: "${articleText}". Based on its topic, suggest practical action items for someone to get involved (e.g., attend protests, donate, volunteer).   Respond ONLY in a bulleted list format with each item starting with a dash (-) and a space.';
+  const prompt =
+    'Read this article: "${articleText}". Based on its topic, suggest practical action items for someone to get involved (e.g., attend protests, donate, volunteer).   Respond ONLY in a bulleted list format with each item starting with a dash (-) and a space.';
   try {
     const response = await client.chat.completions.create({
-      model: 'gpt-4-turbo',  // Use gpt-4-turbo for better efficiency
-      messages: [{ role: 'system', content: prompt }],
+      model: 'gpt-4-turbo', // Use gpt-4-turbo for better efficiency
+      messages: [{ role: 'system', content: `${prompt}: ${articleText}` }],
       max_tokens: 200,
     });
 
     // ensure response variable content is not null
-    if (!response.choices || response.choices.length === 0 || !response.choices[0].message?.content) {
+    if (
+      !response.choices ||
+      response.choices.length === 0 ||
+      !response.choices[0].message?.content
+    ) {
       throw new Error('Invalid response from OpenAI');
     }
 
@@ -36,13 +41,9 @@ export async function getBulletedList(articleText: string): Promise<string> {
     console.error('Error fetching GPT response:', error);
     throw error;
   }
-
- 
 }
 
-
-
- //export async function getBulletedList(prompt: string): Promise<string> {
+//export async function getBulletedList(prompt: string): Promise<string> {
 //   const systemMessage =
 //     'You are an assistant that only responds with a plain text bulleted list. Each bullet should begin with a dash (-) followed by a space.';
 

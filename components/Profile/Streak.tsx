@@ -2,6 +2,8 @@ import React from 'react';
 import Day from './Day';
 import { Image, View } from 'react-native';
 
+// TODO: use firebase to get saved articles and bills
+
 type Props = {
   completedDays: number[];
 };

@@ -3,7 +3,9 @@ import { Image, TouchableOpacity } from 'react-native';
 
 export default function TabLayout() {
   return (
-    <Tabs initialRouteName="profile" screenOptions={{ tabBarShowLabel: false, headerShown: false }}>
+    <Tabs
+      initialRouteName="recentImpacts"
+      screenOptions={{ tabBarShowLabel: false, headerShown: false }}>
       {/* <Tabs.Screen
         name="search"
         options={{
@@ -19,10 +21,7 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <Image
-              source={require('../../images/stepup.png')}
-              className="mt-7 h-10 w-10 rounded-full"
-            />
+            <Image source={require('../../images/stepup.png')} className="mt-6 h-8 w-8" />
           ),
         }}
       />
@@ -32,7 +31,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused, color, size }) => (
             <Image
               source={require('../../images/profile.png')}
-              className="mt-7 h-10 w-10 rounded-full"
+              className="mt-8 h-9 w-9 rounded-full"
             />
           ),
         }}

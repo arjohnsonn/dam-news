@@ -1,9 +1,7 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-function getClassForProgress(progress: number) {
-  return `w-[${progress}%]`;
-}
+// TODO: use firebase to get saved articles and bills
 
 type Props = {
   progress: number;
