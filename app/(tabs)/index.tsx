@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FlatList, ActivityIndicator, ListRenderItemInfo, View } from 'react-native';
+import { FlatList, ActivityIndicator, ListRenderItemInfo, View, Text } from 'react-native';
 import { getTopArticles } from '~/lib/newsApi';
 import Article from '~/components/Article';
 import { ArticleData } from '~/store/articleStore';
@@ -66,6 +66,8 @@ const Screen: React.FC = () => {
     </View>
   ) : (
     <>
+      <Text className="my-3 px-5 mt-16 font-serif text-2xl font-bold">Trending For You</Text>
+
       <FlatList
         data={articles}
         keyExtractor={(item) => item.id}
@@ -77,12 +79,6 @@ const Screen: React.FC = () => {
         onViewableItemsChanged={updateCurrentArticle}
         viewabilityConfig={viewabilityConfig}
       />
-
-      {currentArticle && (
-        <View style={{ padding: 10 }}>
-          <Article article={currentArticle} />
-        </View>
-      )}
     </>
   );
 };

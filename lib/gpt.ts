@@ -27,7 +27,11 @@ export async function getBulletedList(articleText: string): Promise<string> {
     });
 
     // ensure response variable content is not null
-    if (!response.choices || response.choices.length === 0 || !response.choices[0].message?.content) {
+    if (
+      !response.choices ||
+      response.choices.length === 0 ||
+      !response.choices[0].message?.content
+    ) {
       throw new Error('Invalid response from OpenAI');
     }
 
@@ -36,13 +40,9 @@ export async function getBulletedList(articleText: string): Promise<string> {
     console.error('Error fetching GPT response:', error);
     throw error;
   }
-
- 
 }
 
-
-
- //export async function getBulletedList(prompt: string): Promise<string> {
+//export async function getBulletedList(prompt: string): Promise<string> {
 //   const systemMessage =
 //     'You are an assistant that only responds with a plain text bulleted list. Each bullet should begin with a dash (-) followed by a space.';
 
