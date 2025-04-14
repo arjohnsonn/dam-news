@@ -18,12 +18,11 @@ const client = new OpenAI({
  * @returns A promise resolving to a plain-text bulleted list.
  */
 export async function getBulletedList(articleText: string): Promise<string> {
-  const prompt =
-    'Read this article: "${articleText}". Based on its topic, suggest practical action items for someone to get involved (e.g., attend protests, donate, volunteer).   Respond ONLY in a bulleted list format with each item starting with a dash (-) and a space.';
+  const prompt = 'Read this article: "${articleText}". Based on its topic, suggest practical action items for someone to get involved (e.g., attend protests, donate, volunteer).   Respond ONLY in a bulleted list format with each item starting with a dash (-) and a space. Give only 3 action items.';
   try {
     const response = await client.chat.completions.create({
-      model: 'gpt-4-turbo', // Use gpt-4-turbo for better efficiency
-      messages: [{ role: 'system', content: `${prompt}: ${articleText}` }],
+      model: 'gpt-4o-mini',  //cheaper
+      messages: [{ role: 'system', content: prompt }],
       max_tokens: 200,
     });
 
