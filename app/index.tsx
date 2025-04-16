@@ -1,105 +1,137 @@
 import React, { useState } from 'react';
-import { SafeAreaView, Text, View, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { 
+  SafeAreaView, 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  ScrollView, 
+  StyleSheet
+} from 'react-native';
 import { Button } from '~/components/nativewindui/Button';
-import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router'; // For Expo Router navigation
 
-// Updated list of interests with many entries.
-const interests = [
-  'World News',
-  'Technology',
-  'Business',
-  'Politics',
-  'Health',
-  'Science',
-  'Entertainment',
-  'Sports',
-  'Environment',
-  'Fashion',
-  'Lifestyle',
-  'Finance',
+// List of topics
+const topics = [
+  'Arts & Culture',
+  'Human Rights',
+  'Tech',
+  'Health & Wellness',
+  'Environment & Sustainability',
+  'Animal Wellness',
   'Education',
+  'Mental Health',
+  'Science',
+  'Disaster Relief',
+  'Economics',
+  'Politics',
+  'Sports',
+  'Fashion',
+  'Entertainment',
+  'Media',
   'Travel',
-  'Culture',
-  'Local News',
-  'Music',
-  'Art',
-  'History',
-  'Food',
-  'Gaming',
-  'Comedy',
-  'DIY',
-  'Fitness',
-  'Parenting',
-  'Literature',
-  'Nature',
-  'Other',
+  'Crime',
+  'Housing',
+  'Immigration',
+  'Transportation',
+  'Innovation',
+  'Startups',
+  'Space',
+  'Diversity',
+  'Law',
+  'Justice',
+  'Religion',
+  'Cybersecurity',
+  'Privacy',
+  'Employment',
+  'Gender',
+  'Military',
 ];
 
-// Define dull gradient colors for chips.
-const chipGradientUnselected = ['#A1A1AA', '#D4D4D8']; // Dull gray gradient
-const chipGradientSelected = ['#4B5563', '#1F2937']; // Darker gray gradient
+export default function TopicsScreen() {
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const router = useRouter();
 
-export default function InterestsSelection() {
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-
-  const toggleInterest = (interest: string) => {
-    setSelectedInterests(prev =>
-      prev.includes(interest)
-        ? prev.filter(i => i !== interest)
-        : [...prev, interest]
+  function toggleTopic(topic: string) {
+    setSelectedTopics(prev =>
+      prev.includes(topic)
+        ? prev.filter(item => item !== topic)
+        : [...prev, topic]
     );
-  };
+  }
 
   return (
-    <LinearGradient colors={['#000000', '#1F2937']} style={styles.background}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={styles.container}>
-          {/* Header */}
-          <Text style={styles.header}>Choose Your Interests</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        {/* Top Header */}
+        <Text style={styles.header}>Create an Account</Text>
 
-          {/* Scrollable chips arranged in two columns */}
-          <ScrollView contentContainerStyle={styles.chipsContainer}>
-            {interests.map((interest) => {
-              const isSelected = selectedInterests.includes(interest);
+        {/* Progress bar and step text */}
+        <View style={styles.progressContainer}>
+          <Text style={styles.stepText}>1 of 3</Text>
+          <View style={styles.progressBar}>
+            <View style={styles.progressFill} />
+          </View>
+        </View>
+
+        {/* Sub-header */}
+        <Text style={styles.subHeader}>Choose the topics you want to explore</Text>
+
+        {/* Horizontal ScrollView wrapping a multi-row grid */}
+        <ScrollView 
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chipsScrollContent}
+        >
+          {/* A wide container so that chips wrap into multiple rows */}
+          <View style={styles.chipsContainer}>
+            {topics.map(topic => {
+              const isSelected = selectedTopics.includes(topic);
               return (
                 <TouchableOpacity
-                  key={interest}
-                  onPress={() => toggleInterest(interest)}
-                  style={styles.chipWrapper}
+                  key={topic}
+                  onPress={() => toggleTopic(topic)}
+                  style={[
+                    styles.chip, 
+                    isSelected && styles.chipSelected
+                  ]}
                 >
-                  <LinearGradient
-                    colors={isSelected ? chipGradientSelected : chipGradientUnselected}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.chip}
+                  <Text 
+                    style={[
+                      styles.chipText,
+                      isSelected && styles.chipTextSelected
+                    ]}
                   >
-                    <Text style={styles.chipText}>{interest}</Text>
-                  </LinearGradient>
+                    {topic}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
-          </ScrollView>
+          </View>
+        </ScrollView>
 
-          {/* Continue button */}
-          <Button
-            disabled={selectedInterests.length === 0}
-            style={styles.continueButton}
-            onPress={() => {
-              console.log('Selected interests:', selectedInterests);
-              // navigation.navigate('NextStep'); // Uncomment if using navigation
-            }}
-          >
-            <Text style={styles.continueText}>Continue</Text>
-          </Button>
-        </View>
-      </SafeAreaView>
-    </LinearGradient>
+        {/* Continue button */}
+        <TouchableOpacity 
+          style={[
+            styles.continueButton, 
+            selectedTopics.length === 0 && styles.continueButtonDisabled
+          ]}
+          disabled={selectedTopics.length === 0}
+          onPress={() => {
+            console.log('Continue pressed, selected:', selectedTopics);
+            router.push('/nextOnboardingStep'); // Navigate to next step
+          }}
+        >
+          <Text style={styles.continueButtonText}>Continue</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
+  safeArea: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   container: {
     flex: 1,
@@ -107,45 +139,82 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   header: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    marginBottom: 24,
-    color: '#FFF',
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 16,
+    marginBottom: 40,
     textAlign: 'center',
   },
+  progressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 60,
+  },
+  stepText: {
+    marginRight: 16,
+    color: '#666',
+  },
+  progressBar: {
+    flex: 1,
+    height: 6,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    width: '33%', // 1/3 step (step 1)
+    height: '100%',
+    backgroundColor: '#4ade80',
+  },
+  subHeader: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    marginBottom: 25,
+    color: '#222',
+    textAlign: 'left',
+  },
+  chipsScrollContent: {
+    paddingVertical: 10,
+  },
   chipsContainer: {
+    width: 1000,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    paddingBottom: 24,
-  },
-  chipWrapper: {
-    width: '45%',           // Two columns
-    marginBottom: 20,        // Increased vertical spacing
-    marginHorizontal: 4,
   },
   chip: {
-    paddingVertical: 20,
-    borderRadius: 9999,
+    marginRight: 12,
+    marginBottom: 30,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    backgroundColor: '#c3edec',
+    borderRadius: 20,
+    justifyContent: 'center',
     alignItems: 'center',
+  },
+  chipSelected: {
+    backgroundColor: '#76b5c5',
   },
   chipText: {
-    fontSize: 18,
-    color: '#FFF',
+    color: '#333',
     fontWeight: '500',
+    textAlign: 'center',
+  },
+  chipTextSelected: {
+    color: '#065f46',
   },
   continueButton: {
-    //paddingTop: 20,
-    marginTop: 7,
-    marginBottom: 25,
-    backgroundColor: '#8B5CF6',
-    paddingVertical: 20,
-    borderRadius: 12,
+    backgroundColor: '#EF4444',
+    paddingVertical: 14,
+    borderRadius: 24,
     alignItems: 'center',
+    marginBottom: 100,
   },
-  continueText: {
+  continueButtonDisabled: {
+    backgroundColor: '#fecaca',
+  },
+  continueButtonText: {
+    fontSize: 16,
     color: '#FFF',
     fontWeight: '600',
-    fontSize: 20,
   },
 });
