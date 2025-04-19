@@ -34,6 +34,7 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen name="topics" />
       <Tabs.Screen
         name="recentImpacts"
         options={{

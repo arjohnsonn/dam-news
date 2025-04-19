@@ -79,22 +79,10 @@ export default function RootLayout() {
           <ActionSheetProvider>
             <NavThemeProvider value={NAV_THEME[colorScheme]}>
               <Stack screenOptions={SCREEN_OPTIONS}>
-                <Stack.Screen name="(tabs)"  />
+                <Stack.Screen name="(tabs)" />
               </Stack>
             </NavThemeProvider>
           </ActionSheetProvider>
-          <Sheet
-            ref={bottomSheetModalRef}
-            snapPoints={[stepUpText ? stepUpText.length / 1.4 : 350]}>
-            <View>
-              <Text className="text-center text-2xl font-black text-[#E32722]">Step Up!</Text>
-              <ScrollView>
-                <Text className="text-md p-3 text-center leading-4">
-                  {stepUpText?.replace(/\n/g, '\n\n')}
-                </Text>
-              </ScrollView>
-            </View>
-          </Sheet>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </>
