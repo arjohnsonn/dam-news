@@ -3,9 +3,7 @@ import { Image, TouchableOpacity } from 'react-native';
 
 export default function TabLayout() {
   return (
-    <Tabs
-      initialRouteName="recentImpacts"
-      screenOptions={{ tabBarShowLabel: false, headerShown: false }}>
+    <Tabs initialRouteName="index" screenOptions={{ tabBarShowLabel: false, headerShown: false }}>
       {/* <Tabs.Screen
         name="search"
         options={{
@@ -34,6 +32,12 @@ export default function TabLayout() {
               className="mt-8 h-9 w-9 rounded-full"
             />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="recentImpacts"
+        options={{
+          href: null,
         }}
       />
     </Tabs>
