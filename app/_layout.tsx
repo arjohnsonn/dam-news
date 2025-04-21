@@ -34,6 +34,8 @@ export default function RootLayout() {
             <NavThemeProvider value={NAV_THEME[colorScheme]}>
               <Stack screenOptions={SCREEN_OPTIONS}>
                 <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="nextOnboardingStep" options={{ headerShown: false }} />
+                <Stack.Screen name="lastOnboardingStep" options={{ headerShown: false }} />
               </Stack>
             </NavThemeProvider>
           </ActionSheetProvider>

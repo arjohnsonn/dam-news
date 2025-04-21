@@ -94,6 +94,11 @@ const ETHNICITY_ITEMS = [
 
 const DROPDOWN_ZINDEX = { age: 5000, job: 4000, state: 3000, ethnicity: 2000 };
 
+// export const screenOptions = {
+//   headerBackVisible: false,
+//   headerTitle: '',
+// };
+
 export default function NextOnboardingStep() {
   const router = useRouter();
   const [formData, setFormData] = useState({ ageRange: '', jobRole: '', state: '', ethnicity: '' });
@@ -212,7 +217,7 @@ export default function NextOnboardingStep() {
         <TouchableOpacity
           style={[styles.continueButton, !canContinue && styles.continueButtonDisabled]}
           disabled={!canContinue}
-          onPress={() => router.push('/finishOnboarding')}>
+          onPress={() => router.push('/lastOnboardingStep')}>
           <Text style={styles.continueButtonText}>Continue</Text>
         </TouchableOpacity>
       </Pressable>
@@ -223,7 +228,7 @@ export default function NextOnboardingStep() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#FFFFFF' },
   container: { flex: 1, paddingHorizontal: 20, paddingTop: 20, paddingBottom: 100 },
-  header: { fontSize: 18, fontWeight: '600', marginBottom: 40, textAlign: 'center' },
+  header: { fontSize: 18, fontWeight: '600', marginBottom: 40, marginTop: 16, textAlign: 'center' },
   progressContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
   stepText: { marginRight: 16, color: '#666' },
   progressBar: {
