@@ -8,18 +8,6 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
 import { NAV_THEME } from '~/theme';
-import { Text, Image, View, TouchableOpacity, ScrollView } from 'react-native';
-import { Sheet, useSheetRef } from '~/components/nativewindui/Sheet';
-
-import { getBulletedList } from '~/lib/gpt';
-import { useState } from 'react';
-import { useArticleStore } from '~/store/articleStore';
-
-//
-//adding a new comment to step-up
-//another one
-
-//testing branch stepup!
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -29,41 +17,6 @@ export {
 export default function RootLayout() {
   useInitialAndroidBarSync();
   const { colorScheme, isDarkColorScheme } = useColorScheme();
-  const [stepUpText, setStepUpText] = useState<string | null>(null);
-
-  let modalOpen: boolean = false;
-  const bottomSheetModalRef = useSheetRef();
-
-  // Cache so we don't call the API every time
-  let cachedTitle: string;
-
-  async function stepUp() {
-    const currentArticle = useArticleStore.getState().currentArticle;
-    if (!currentArticle) {
-      console.warn('No current article found');
-      return;
-    }
-
-    setStepUpText('Loading action items...');
-
-    try {
-      let text;
-      if (currentArticle.headline != cachedTitle) {
-        text = await getBulletedList(currentArticle?.summary);
-        cachedTitle = currentArticle.headline;
-      } else {
-        text = stepUpText;
-      }
-
-      setStepUpText(text);
-    } catch (error) {
-      console.error('Error fetching action items:', error);
-      setStepUpText('Failed to load action items. Please try again.');
-    }
-
-    bottomSheetModalRef.current?.present();
-    modalOpen = true;
-  }
 
   return (
     <>

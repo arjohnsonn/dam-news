@@ -1,9 +1,12 @@
 import { Tabs } from 'expo-router';
-import { Image, TouchableOpacity } from 'react-native';
+import { Image } from 'react-native';
+import { useUIStore } from '~/store/bottomBar';
 
 export default function TabLayout() {
+  const bottomBarEnabled = useUIStore((s: { bottomBarEnabled: any }) => s.bottomBarEnabled);
+
   return (
-    <Tabs initialRouteName="index" screenOptions={{ tabBarShowLabel: false, headerShown: false }}>
+    <Tabs screenOptions={{ tabBarShowLabel: false, headerShown: false }}>
       {/* <Tabs.Screen
         name="search"
         options={{
@@ -18,6 +21,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          href: !bottomBarEnabled ? null : undefined,
           tabBarIcon: ({ focused, color, size }) => (
             <Image source={require('../../images/stepup.png')} className="mt-6 h-8 w-8" />
           ),
@@ -26,6 +30,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
+          href: !bottomBarEnabled ? null : undefined,
           tabBarIcon: ({ focused, color, size }) => (
             <Image
               source={require('../../images/profile.png')}
@@ -34,7 +39,10 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen name="topics" />
+
+      <Tabs.Screen name="main" options={{ href: null }} />
+      <Tabs.Screen name="demographics" options={{ href: null }} />
+      <Tabs.Screen name="goal" options={{ href: null }} />
       <Tabs.Screen
         name="recentImpacts"
         options={{

@@ -1,155 +1,110 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  FlatList,
-  ActivityIndicator,
-  ListRenderItemInfo,
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
-import { getTopArticles } from '~/lib/newsApi';
-import Article from '~/components/Article';
-import { ArticleData } from '~/store/articleStore';
-import { useArticleStore } from '~/store/articleStore';
-import { Sheet } from '~/components/nativewindui/Sheet';
-import { ScrollView } from 'react-native';
-import { getBulletedList } from '~/lib/gpt';
-import { useSheetRef } from '~/components/nativewindui/Sheet';
+import React, { useState } from 'react';
+import { SafeAreaView, View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { Button } from '~/components/nativewindui/Button';
+import { useRouter } from 'expo-router';
 
-const Screen: React.FC = () => {
-  const [articles, setArticles] = useState<ArticleData[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [currentArticle, setCurrentArticle] = useState<ArticleData | null>(null);
+const topics = [
+  'Arts & Culture',
+  'Human Rights',
+  'Tech',
+  'Health & Wellness',
+  'Environment & Sustainability',
+  'Animal Wellness',
+  'Education',
+  'Mental Health',
+  'Science',
+  'Disaster Relief',
+  'Economics',
+  'Politics',
+  'Sports',
+  'Fashion',
+  'Entertainment',
+  'Media',
+  'Travel',
+  'Crime',
+  'Housing',
+  'Immigration',
+  'Transportation',
+  'Innovation',
+  'Startups',
+  'Space',
+  'Diversity',
+  'Law',
+  'Justice',
+  'Religion',
+  'Cybersecurity',
+  'Privacy',
+  'Employment',
+  'Gender',
+  'Military',
+];
 
-  const [stepUpText, setStepUpText] = useState<string | null>(null);
+export default function TopicsScreen() {
+  const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
+  const router = useRouter();
 
-  const bottomSheetModalRef = useSheetRef();
-
-  // Cache so we don't call the API every time
-  let cachedTitle: string;
-
-  async function stepUp() {
-    const currentArticle = useArticleStore.getState().currentArticle;
-    if (!currentArticle) {
-      console.warn('No current article found');
-      return;
-    }
-
-    setStepUpText('');
-
-    bottomSheetModalRef.current?.present();
-
-    try {
-      let text;
-      if (currentArticle.headline != cachedTitle) {
-        text = await getBulletedList(currentArticle?.summary);
-        cachedTitle = currentArticle.headline;
-      } else {
-        text = stepUpText;
-      }
-
-      setStepUpText(text);
-    } catch (error) {
-      console.error('Error fetching action items:', error);
-      setStepUpText('Failed to load action items. Please try again.');
-    }
+  function toggleTopic(topic: string) {
+    setSelectedTopics((prev) =>
+      prev.includes(topic) ? prev.filter((item) => item !== topic) : [...prev, topic]
+    );
   }
 
-  const fetchArticles = async () => {
-    setLoading(true);
-    try {
-      const data = await getTopArticles();
-      const newArticles: ArticleData[] = data.articles.map((article) => ({
-        id: article.url, // using URL as a unique identifier
-        headline: article.title,
-        author: article.author || 'Unknown',
-        summary: article.description || '',
-        content: article.content || '',
-        image: article.urlToImage || '',
-      }));
+  return (
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 px-5 pt-5">
+        {/* Top Header */}
+        <Text className="mb-10 mt-4 text-center text-lg font-semibold">Create an Account</Text>
 
-      // Get empty articles from newArticles
-      const filteredArticles = newArticles.filter(
-        (article) => article.summary != '' && article.content != ''
-      );
-
-      setArticles(filteredArticles);
-      if (filteredArticles.length > 0) {
-        setCurrentArticle(filteredArticles[0]);
-      }
-    } catch (error) {
-      console.error('Failed to fetch articles:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchArticles();
-  }, []);
-
-  useEffect(() => {
-    if (currentArticle) {
-      useArticleStore.getState().setCurrentArticle(currentArticle);
-    }
-  }, [currentArticle]);
-
-  const viewabilityConfig = {
-    itemVisiblePercentThreshold: 50,
-  };
-
-  const updateCurrentArticle = (info: { viewableItems: Array<{ item: ArticleData }> }) => {
-    if (info.viewableItems.length > 0) {
-      const visibleItem = info.viewableItems[0].item;
-      setCurrentArticle(visibleItem);
-    }
-  };
-
-  return loading ? (
-    <View className="h-full w-full items-center justify-center">
-      <ActivityIndicator size="large" />
-    </View>
-  ) : (
-    <>
-      <Text className="my-3 mt-16 px-5 font-serif text-2xl font-bold">Trending For You</Text>
-
-      <FlatList
-        data={articles}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <Article article={item} />}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onEndReachedThreshold={0.5}
-        onViewableItemsChanged={updateCurrentArticle}
-        viewabilityConfig={viewabilityConfig}
-      />
-
-      <TouchableOpacity
-        onPress={stepUp}
-        className="mx-auto mb-3 w-10/12 items-center rounded-full bg-red-600 py-4">
-        <Text className="text-md font-bold text-white">Step Up</Text>
-      </TouchableOpacity>
-
-      <Sheet ref={bottomSheetModalRef} snapPoints={[stepUpText ? stepUpText.length / 1.1 : 350]}>
-        <View>
-          <Text className="text-center text-2xl font-black text-[#E32722]">Step Up!</Text>
-          {stepUpText != '' ? (
-            <ScrollView>
-              <Text className="text-md p-3 text-center leading-4">
-                {stepUpText?.replace(/\n/g, '\n\n')}
-              </Text>
-            </ScrollView>
-          ) : (
-            <View className="h-full w-full items-center justify-center">
-              <ActivityIndicator size="small" />
-            </View>
-          )}
+        {/* Progress bar and step text */}
+        <View className="mb-16 flex-row items-center">
+          <Text className="mr-4 text-xs text-gray-500">1 of 3</Text>
+          <View className="h-1.5 flex-1 overflow-hidden rounded bg-gray-300">
+            <View className="h-full w-1/3 bg-green-400" />
+          </View>
         </View>
-      </Sheet>
-    </>
-  );
-};
 
-export default Screen;
+        {/* Sub-header */}
+        <Text className="mb-6 text-left text-2xl font-bold text-gray-900">
+          Choose the topics you want to explore
+        </Text>
+
+        {/* Horizontal ScrollView wrapping a multi-row grid */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingVertical: 10 }}>
+          {/* A wide container so that chips wrap into multiple rows */}
+          <View className="w-[1000px] flex-row flex-wrap">
+            {topics.map((topic) => {
+              const isSelected = selectedTopics.includes(topic);
+              return (
+                <TouchableOpacity
+                  key={topic}
+                  onPress={() => toggleTopic(topic)}
+                  className={`mb-7 mr-3 items-center justify-center rounded-full px-4 py-2.5 ${
+                    isSelected ? 'bg-[#a3cbcb]' : 'bg-[#c3edec]'
+                  }`}>
+                  <Text className={`text-center font-medium text-gray-800`}>{topic}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView>
+
+        {/* Continue button */}
+        <TouchableOpacity
+          disabled={selectedTopics.length === 0}
+          onPress={() => {
+            router.push('/demographics'); // Navigate to next step
+
+            // TODO: Save selected topics to the database
+          }}
+          className={`mb-24 mt-5 items-center rounded-2xl py-3 ${
+            selectedTopics.length === 0 ? 'bg-red-200' : 'bg-red-500'
+          }`}>
+          <Text className="text-base font-semibold text-white">Continue</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+}

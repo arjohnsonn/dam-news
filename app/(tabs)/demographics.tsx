@@ -168,11 +168,17 @@ export default function NextOnboardingStep() {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <Pressable className="flex-1 px-5 pb-24 pt-5" onPress={closeAll}>
-        <Text className="mb-10 text-center text-lg font-semibold">Create an Account</Text>
-        <View className="mb-2.5 flex-row items-center">
-          <Text className="mr-4 text-gray-500">2 of 3</Text>
+        {/* Header */}
+        <Text className="mb-10 mt-4 text-center text-lg font-semibold">Create an Account</Text>
+
+        {/* Progress */}
+        <View className="mb-2.5 w-full flex-row items-center">
+          <Text className="mr-4 text-xs text-gray-500">2 of 3</Text>
           <View className="h-1.5 flex-1 overflow-hidden rounded bg-gray-300">
-            <View className="h-full w-2/3 bg-green-400" />
+            <View
+              className="h-full bg-green-400"
+              style={{ width: '67%' }} // width computed inline
+            />
           </View>
         </View>
         <Text className="mb-10 text-xs text-gray-800">
@@ -294,8 +300,10 @@ export default function NextOnboardingStep() {
           className={`mt-5 items-center rounded-2xl py-3 ${
             canContinue ? 'bg-red-500' : 'bg-red-200'
           }`}
-          /*onPress={() => router.push('/finishOnboarding')}*/
-        >
+          onPress={() => {
+            router.push('/goal');
+            // TODO: Save demographics to the database
+          }}>
           <Text className="text-base font-semibold text-white">Continue</Text>
         </TouchableOpacity>
       </Pressable>
