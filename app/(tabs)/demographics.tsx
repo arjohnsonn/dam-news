@@ -115,7 +115,6 @@ const STATE_ITEMS = [
 
 const ETHNICITY_ITEMS = [
   { label: 'African', value: 'African' },
-  { label: 'American', value: 'American' },
   { label: 'Asian', value: 'Asian' },
   { label: 'European', value: 'European' },
   { label: 'Middle Eastern', value: 'Middle Eastern' },
@@ -132,7 +131,12 @@ const DROPDOWN_ZINDEX = { age: 5000, job: 4000, state: 3000, ethnicity: 2000 };
 
 export default function NextOnboardingStep() {
   const router = useRouter();
-  const [formData, setFormData] = useState({ ageRange: '', jobRole: '', state: '', ethnicity: '' });
+  const [formData, setFormData] = useState({
+    ageRange: '18-24',
+    jobRole: 'Doctor',
+    state: 'Texas',
+    ethnicity: 'Asian',
+  });
 
   // Track open and items state for each picker
   const [ageOpen, setAgeOpen] = useState(false);

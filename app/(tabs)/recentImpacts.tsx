@@ -13,7 +13,7 @@ export default function recentImpacts() {
           <Image source={require('~/images/move-left.png')} className="h-6 w-6" />
         </TouchableOpacity>
       </View>
-      {Object.keys([1, 2, 3]).map((key) => (
+      {Object.keys([1]).map((key) => (
         <SavedArticle key={key} />
       ))}
     </View>

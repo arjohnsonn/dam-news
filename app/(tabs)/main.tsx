@@ -14,7 +14,7 @@ import { ArticleData } from '~/store/articleStore';
 import { useArticleStore } from '~/store/articleStore';
 import { Sheet } from '~/components/nativewindui/Sheet';
 import { ScrollView } from 'react-native';
-import { getBulletedList } from '~/lib/gpt';
+import { getGPTResponse } from '~/lib/gpt';
 import { useSheetRef } from '~/components/nativewindui/Sheet';
 
 const Screen: React.FC = () => {
@@ -43,7 +43,9 @@ const Screen: React.FC = () => {
     try {
       let text;
       if (currentArticle.headline != cachedTitle) {
-        text = await getBulletedList(currentArticle?.summary);
+        text = await getGPTResponse(
+          `Read this article: "${currentArticle?.summary}". Based on its topic, suggest practical action items for someone to get involved (e.g., attend protests, donate, volunteer).   Respond ONLY in a bulleted list format with each item starting with a dash (-) and a space. Give only 3 action items.`
+        );
         cachedTitle = currentArticle.headline;
       } else {
         text = stepUpText;
@@ -70,9 +72,21 @@ const Screen: React.FC = () => {
       }));
 
       // Get empty articles from newArticles
-      const filteredArticles = newArticles.filter(
+      let filteredArticles = newArticles.filter(
         (article) => article.summary != '' && article.content != ''
       );
+
+      // Replace article content with GPT summary in parallel
+      const summarizedArticles = await Promise.all(
+        filteredArticles.map(async (article) => {
+          if (!article.content) return article;
+          const response = await getGPTResponse(
+            `Summarize this article: "${article.content}". Provide a brief summary in several sentences.`
+          );
+          return { ...article, content: response };
+        })
+      );
+      filteredArticles = summarizedArticles;
 
       setArticles(filteredArticles);
       if (filteredArticles.length > 0) {
