@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { saveUserProfile } from '~/lib/profileService';
 import { SafeAreaView, View, Text, TouchableOpacity, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -304,9 +305,19 @@ export default function NextOnboardingStep() {
           className={`mt-5 items-center rounded-2xl py-3 ${
             canContinue ? 'bg-red-500' : 'bg-red-200'
           }`}
-          onPress={() => {
-            router.push('/goal');
-            // TODO: Save demographics to the database
+          onPress={async () => {
+            const profileData = {
+              age: formData.ageRange,           
+              job: formData.jobRole,
+              state: formData.state,
+              ethnicity: formData.ethnicity,
+              createdAt: new Date(),
+            };
+          
+            await saveUserProfile(profileData); // 👈 Firestore save
+            const docId = await saveUserProfile(profileData);
+
+            router.push({ pathname: '/(tabs)/goal', params: { docId } }); // ✅ pass it forward
           }}>
           <Text className="text-base font-semibold text-white">Continue</Text>
         </TouchableOpacity>

@@ -57,11 +57,11 @@ export default function LastOnboardingStep() {
         {/* Helper Text */}
         <Text className="mb-8 text-center text-xs text-gray-500">Please use the slider</Text>
 
-        {/* Continue Button */}
+        {/* Continue Button */}                       
         <TouchableOpacity
           onPress={() => {
             setBottomBarEnabled(true);
-            router.navigate('/main');
+            router.navigate('/(tabs)/main' as any);
             // TODO: Save goal to the database
           }}
           className="mt-5 items-center rounded-2xl bg-red-500 py-3">
