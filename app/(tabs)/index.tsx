@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { SafeAreaView, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Button } from '~/components/nativewindui/Button';
 import { useRouter } from 'expo-router';
+import { saveUserProfile } from '~/lib/profileService';
 
 const topics = [
   'Arts & Culture',
@@ -94,9 +95,14 @@ export default function TopicsScreen() {
         {/* Continue button */}
         <TouchableOpacity
           disabled={selectedTopics.length === 0}
-          onPress={() => {
-            router.push('/demographics'); // Navigate to next step
+          onPress={ async () => {
+            const profileData = {
+              topics: selectedTopics,
+              createdAt: new Date(),
+            };
 
+            const docId = await saveUserProfile(profileData);
+            router.push({pathname: '/demographics', params: {docId}} as any);
             // TODO: Save selected topics to the database
           }}
           className={`mb-24 mt-5 items-center rounded-2xl py-3 ${

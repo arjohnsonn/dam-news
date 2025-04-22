@@ -3,6 +3,13 @@ import { saveUserProfile } from '~/lib/profileService';
 import { SafeAreaView, View, Text, TouchableOpacity, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '~/lib/firebaseConfig';
+import { useLocalSearchParams } from 'expo-router';
+
+
+
+
 
 const AGE_ITEMS = [
   { label: '18-24', value: '18-24' },
@@ -132,6 +139,7 @@ const DROPDOWN_ZINDEX = { age: 5000, job: 4000, state: 3000, ethnicity: 2000 };
 
 export default function NextOnboardingStep() {
   const router = useRouter();
+  const { docId } = useLocalSearchParams();
   const [formData, setFormData] = useState({
     ageRange: '18-24',
     jobRole: 'Doctor',
@@ -168,6 +176,27 @@ export default function NextOnboardingStep() {
       const newValue =
         typeof action === 'function' ? (action as (prev: string) => string)(formData[key]) : action;
       setFormData((f) => ({ ...f, [key]: newValue }));
+    };
+
+    const handleContinue = async () => {
+      if (typeof docId !== 'string') {
+        console.error('Invalid docId');
+        return;
+      }
+  
+      try {
+        const userDoc = doc(db, 'profiles', docId);
+        await updateDoc(userDoc, {
+          age: formData.ageRange,
+          job: formData.jobRole,
+          state: formData.state,
+          ethnicity: formData.ethnicity,
+        });
+  
+        router.push({ pathname: '/(tabs)/goal', params: { docId } } as any);
+      } catch (e) {
+        console.error('Error updating Firestore:', e);
+      }
     };
 
   return (
@@ -302,23 +331,11 @@ export default function NextOnboardingStep() {
         </View>
         <TouchableOpacity
           disabled={!canContinue}
+          onPress={handleContinue}
           className={`mt-5 items-center rounded-2xl py-3 ${
             canContinue ? 'bg-red-500' : 'bg-red-200'
           }`}
-          onPress={async () => {
-            const profileData = {
-              age: formData.ageRange,           
-              job: formData.jobRole,
-              state: formData.state,
-              ethnicity: formData.ethnicity,
-              createdAt: new Date(),
-            };
-          
-            await saveUserProfile(profileData); // 👈 Firestore save
-            const docId = await saveUserProfile(profileData);
-
-            router.push({ pathname: '/(tabs)/goal', params: { docId } }); // ✅ pass it forward
-          }}>
+          >
           <Text className="text-base font-semibold text-white">Continue</Text>
         </TouchableOpacity>
       </Pressable>

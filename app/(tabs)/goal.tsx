@@ -3,13 +3,39 @@ import { SafeAreaView, View, Text, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import Slider from '@react-native-community/slider';
 import { useUIStore } from '~/store/bottomBar';
+import { useLocalSearchParams } from 'expo-router';
+import { updateUserInterests } from '~/lib/profileService';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '~/lib/firebaseConfig';
+
+
+
 
 export default function LastOnboardingStep() {
   const router = useRouter();
+  const { docId } = useLocalSearchParams(); // 👈 get docId passed from previous screen
   const [minutes, setMinutes] = useState(30);
   const setBottomBarEnabled = useUIStore(
     (s: { setBottomBarEnabled: any }) => s.setBottomBarEnabled
   );
+
+  const handleContinue = async () => {
+    if(typeof docId !== 'string'){
+      console.error('Invalid docId');
+      return;
+    }
+
+    try {
+      const userDoc = doc(db, 'profiles', docId);
+      await updateDoc(userDoc, {goalMinutes: minutes});
+      console.log('Goal saved to firestore');
+    } catch(e) {
+      console.error('Error saving goal:', e);
+    }
+
+    setBottomBarEnabled(true);
+    router.navigate('/(tabs)/main' as any);
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -59,11 +85,13 @@ export default function LastOnboardingStep() {
 
         {/* Continue Button */}                       
         <TouchableOpacity
-          onPress={() => {
-            setBottomBarEnabled(true);
-            router.navigate('/(tabs)/main' as any);
+          onPress= {handleContinue}
+          //</View>{() => {
+            // setBottomBarEnabled(true);
+            // router.navigate('/(tabs)/main' as any);
+            
             // TODO: Save goal to the database
-          }}
+          //}}
           className="mt-5 items-center rounded-2xl bg-red-500 py-3">
           <Text className="text-base font-semibold text-white">Continue</Text>
         </TouchableOpacity>

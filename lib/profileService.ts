@@ -5,10 +5,12 @@ import { db } from './firebaseConfig';
 import {doc, updateDoc} from 'firebase/firestore';
 
 type UserProfile = {
-  age: string;
-  job: string;
-  state: string;
-  ethnicity: string;
+  age?: string;
+  job?: string;
+  state?: string;
+  ethnicity?: string;
+  topics?: string[];
+  goalMinutes?: number;
   createdAt: Date;
 };
 
