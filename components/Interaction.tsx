@@ -1,24 +1,51 @@
 import React from 'react';
-import { View, Image, Text, TouchableOpacity, Share } from 'react-native';
+import { View, Image, Text, TouchableOpacity, Share, Alert } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { saveArticle } from '~/lib/profileService';
 
 type Props = {
   author: string;
   url: string;
+  title: string; // <-- Add title
+  summary: string; // <-- Add summary
   authorImage?: string;
+  docId: string;
 };
 
 const TRUNCATE_LENGTH = 24;
 
 const Interaction = (props: Props) => {
+  //const { docId } = useLocalSearchParams();
+  const docId  = 'pEeD7Lno6x1sOpAyKQ58';
+
   const onShare = async () => {
     try {
       await Share.share({
         message: 'Check out this article I found on StepUp!',
         url: props.url,
-        title: 'Check out this article',
+        title: props.title,
       });
     } catch (error) {
       console.error('Error sharing article:', error);
+    }
+  };
+
+  const onSave = async () => {
+    if(!props.docId) {
+      Alert.alert('Missing profile ID');
+      return;
+    }
+
+    try {
+      await saveArticle(props.docId, {
+        title: props.title,
+        summary: props.summary,
+        url: props.url,
+      });
+      Alert.alert('Article saved!');
+    } catch (e) {
+      console.error('Error saving article:', e);
+      Alert.alert('Failed to save article');
     }
   };
 
@@ -38,7 +65,7 @@ const Interaction = (props: Props) => {
         </Text>
       </View>
       <View className="flex flex-row items-center gap-x-2">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onSave}>
           <View className="rounded-full bg-[#DCEFEF] p-2">
             <Image source={require('../images/save.png')} className="h-4 w-4" />
           </View>

@@ -2,6 +2,8 @@
 import React from 'react';
 import { SafeAreaView, View, Image, Text, ScrollView, Dimensions } from 'react-native';
 import Interaction from '~/components/Interaction';
+import { useLocalSearchParams } from 'expo-router';
+
 
 interface ArticleProps {
   article: {
@@ -16,6 +18,9 @@ interface ArticleProps {
 
 const Article: React.FC<ArticleProps> = ({ article }) => {
   const windowWidth = Dimensions.get('window').width;
+  const { docId } = useLocalSearchParams();
+  console.log('docId in Article screen:', docId);
+
 
   return (
     <SafeAreaView style={{ width: windowWidth }}>
@@ -26,7 +31,13 @@ const Article: React.FC<ArticleProps> = ({ article }) => {
           {/* HEADLINE/TITLE */}
           <Text className="mt-2 text-left font-serif text-lg font-bold">{article.headline}</Text>
 
-          <Interaction author={article.author} url={article.id} />
+          <Interaction
+            author={article.author}
+            url={article.id}
+            title={article.headline}
+            summary={article.summary}
+            docId={typeof docId === 'string' ? docId : ''}
+          />
 
           {/* SUMMARY */}
           <View className="rounded-lg bg-[#DCEFEF] p-3">
