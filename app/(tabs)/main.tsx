@@ -44,7 +44,7 @@ const Screen: React.FC = () => {
       let text;
       if (currentArticle.headline != cachedTitle) {
         text = await getGPTResponse(
-          `Read this article: "${currentArticle?.summary}". Based on its topic, suggest practical action items for someone to get involved (e.g., attend protests, donate, volunteer).   Respond ONLY in a bulleted list format with each item starting with a dash (-) and a space. Give only 3 action items.`
+          `Read this article: "${currentArticle?.summary}". Based on its topic, suggest practical action items for someone to get involved (e.g., attend protests, donate, volunteer).   Respond ONLY in a bulleted list format with each item starting with a dash (-) and a space. Give only 3 action items. If suggesting a volunteer activity, petition, or donation link, attempt to provide a link ONLY if it is a real, reputable source.`
         );
         cachedTitle = currentArticle.headline;
       } else {

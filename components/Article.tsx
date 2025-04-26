@@ -18,7 +18,8 @@ interface ArticleProps {
 
 const Article: React.FC<ArticleProps> = ({ article }) => {
   const windowWidth = Dimensions.get('window').width;
-  const { docId } = useLocalSearchParams();
+  //const { docId } = useLocalSearchParams();
+  const docId  = 'pEeD7Lno6x1sOpAyKQ58';
   console.log('docId in Article screen:', docId);
 
 

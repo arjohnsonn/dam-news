@@ -14,7 +14,8 @@ type SavedArticle = {
 };
 
 const Saved = () => {
-  const { docId } = useLocalSearchParams();
+  //const { docId } = useLocalSearchParams();
+  const docId  = 'pEeD7Lno6x1sOpAyKQ58';
   const [articles, setArticles] = useState<SavedArticle[]>([]);
 
   useEffect(() => {
@@ -53,20 +54,25 @@ const Saved = () => {
         <Text className="font-md flex text-center text-xs text-slate-500">Show All</Text>
       </View>
 
-      <ScrollView>
-        {articles.length > 0 ? (
-          articles.map((article) => (
-            <View key={article.id} className="mb-3 rounded-lg bg-white p-3 shadow-sm">
-              <Text className="text-base font-semibold text-black">{article.title}</Text>
-              <Text className="text-xs text-slate-600 pt-1">{article.summary}</Text>
-            </View>
-          ))
-        ) : (
-          <View className="flex-1 items-center justify-center py-6">
-            <Text className="text-center text-slate-500">You have no saved articles!</Text>
+      {/* ADD fixed height container here */}
+      <View style={{ height: 150 }}> {/* 👈 set height so only this part scrolls */}
+        <ScrollView>
+          <View className="flex flex-col">
+            {articles.length > 0 ? (
+              articles.map((article) => (
+                <View key={article.id} className="mb-3 rounded-lg bg-white p-3 shadow-sm">
+                  <Text className="text-base font-semibold text-black">{article.title}</Text>
+                  <Text className="text-xs text-slate-600 pt-1">{article.summary}</Text>
+                </View>
+              ))
+            ) : (
+              <View className="flex-1 items-center justify-center py-6">
+                <Text className="text-center text-slate-500">You have no saved articles!</Text>
+              </View>
+            )}
           </View>
-        )}
-      </ScrollView>
+        </ScrollView>
+      </View>
     </View>
   );
 };
