@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '~/lib/firebaseConfig';
 import Day from '~/components/Profile/Day';
 import Progress from '~/components/Profile/Progress';
 import RecentImpact from '~/components/Profile/RecentImpact';

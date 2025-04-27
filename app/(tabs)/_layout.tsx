@@ -41,6 +41,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen name="index" options={{ href: null }} />
+      <Tabs.Screen name="savedArticles" options={{ href: null }} />
       <Tabs.Screen name="demographics" options={{ href: null }} />
       <Tabs.Screen name="goal" options={{ href: null }} />
       <Tabs.Screen
